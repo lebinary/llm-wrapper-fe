@@ -4,6 +4,8 @@ import { FileUpload } from './components/FileUpload';
 import { Conversation } from './types';
 import { ConversationList } from './components/ConversationList';
 import { Chat } from './components/Chat';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
 
 export const HOST = "http://localhost:8000";
 
@@ -24,13 +26,9 @@ function App() {
     }
   };
 
-  const handleFileUpload = async (files: File[], title?: string) => {
+  const handleFileUpload = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file));
-
-    if (title) {
-      formData.append('title', title);
-    }
 
     try {
       const response = await axios.post(`${HOST}/conversations/upload`, formData, {
@@ -76,24 +74,49 @@ function App() {
     }
   };
 
+  const startConversation = () => {
+    setSelectedConversation(null);
+  }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">File Chat App</h1>
-      <FileUpload onUpload={handleFileUpload} />
-      <div className="grid grid-cols-3 gap-4 mt-4">
-        <ConversationList
-          conversations={conversations}
-          onSelectConversation={setSelectedConversation}
-          selectedConversationId={selectedConversation?.id}
-        />
-        {selectedConversation && (
-          <Chat
-            conversation={selectedConversation}
-            onSendMessage={handleChat}
-            onRatePrompt={handleRating}
-          />
-        )}
+    <div className="bg-gray-100 min-h-screen">
+      <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+        <header className="bg-white shadow-sm rounded-lg mb-8 p-6">
+          <h1 className="text-3xl font-bold text-gray-800">LLM Wrapper</h1>
+        </header>
+        <div className="flex flex-grow overflow-hidden bg-white shadow-lg rounded-lg">
+          <div className="w-1/3 border-r border-gray-200 flex flex-col">
+            <div className="p-4 border-b border-gray-200">
+              <button
+                onClick={startConversation}
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center justify-center"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                New Conversation
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-grow p-4">
+              <ConversationList
+                conversations={conversations}
+                onSelectConversation={setSelectedConversation}
+                selectedConversationId={selectedConversation?.id}
+              />
+            </div>
+          </div>
+          <div className="w-2/3 p-6">
+            {selectedConversation ? (
+              <Chat
+                conversation={selectedConversation}
+                onSendMessage={handleChat}
+                onRatePrompt={handleRating}
+              />
+            ) : (
+              <FileUpload onUpload={handleFileUpload} />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

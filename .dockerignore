@@ -1,0 +1,11 @@
+# Ignore node_modules folder
+node_modules
+
+# Ignore all .log files
+*.log
+
+# Ignore all files in any directory named temp
+**/temp
+
+# Don't ignore important.log, even if it matches the above patterns
+!important.log

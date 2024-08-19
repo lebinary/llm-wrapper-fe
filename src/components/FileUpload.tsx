@@ -74,7 +74,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
           disabled={files.length === 0}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-300"
         >
-          Upload Files
+          Upload Files To Get Started
         </button>
       </form>
     </div>

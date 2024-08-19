@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Prompt, Conversation, isTextResponse, isDataResponse, isJsonResponse } from '../types';
+import { Prompt, Conversation, UploadedFile, isTextResponse, isDataResponse, isJsonResponse } from '../types';
 import { DataTable } from './DataTable';
 import { JsonViewer } from './JsonViewer';
+import { FileTile } from './FileTile';
 
 interface ChatProps {
   conversation: Conversation;
   onSendMessage: (message: string) => void;
   onRatePrompt: (promptId: number, rating: number) => void;
+  onUpdateFile: (fileId: number, fileData: Partial<UploadedFile>) => void;
 }
 
-export const Chat: React.FC<ChatProps> = ({ conversation, onSendMessage, onRatePrompt }) => {
+export const Chat: React.FC<ChatProps> = ({ conversation, onSendMessage, onRatePrompt, onUpdateFile }) => {
   const [message, setMessage] = useState('');
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -58,7 +60,12 @@ export const Chat: React.FC<ChatProps> = ({ conversation, onSendMessage, onRateP
   return (
     <div className="flex flex-col h-full bg-gray-50 rounded-lg shadow-lg overflow-hidden">
       <div className="bg-white p-4 border-b border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800">{conversation.title}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">{conversation.title}</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+          {conversation.files.map((file) => (
+            <FileTile key={file.id} file={file} onUpdateFile={onUpdateFile} />
+          ))}
+        </div>
       </div>
       <div className="flex-grow overflow-y-auto p-4 space-y-4">
         {conversation.prompts.map((prompt, index) => (

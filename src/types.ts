@@ -4,10 +4,21 @@ export type JsonResponse = { json: object };
 
 type PromptResponse = TextResponse | DataResponse | JsonResponse;
 
+export type UploadedFile = {
+  id: number;
+  filename?: string;
+  path: string;
+  active: boolean;
+  top_row?: null;
+  created_at: string;
+}
+
 export type Conversation = {
   id: number;
   title: string;
   prompts: Prompt[];
+  files: UploadedFile[];
+  created_at: string;
 }
 
 export type Prompt = {
@@ -15,6 +26,7 @@ export type Prompt = {
   content: string;
   response: PromptResponse;
   rating: number | null;
+  created_at: string;
 }
 
 export const isTextResponse = (promptResponse: PromptResponse): promptResponse is TextResponse => {

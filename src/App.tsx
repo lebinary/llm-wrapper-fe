@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FileUpload } from './components/FileUpload';
-import { Conversation } from './types';
+import { Conversation, UploadedFile } from './types';
 import { ConversationList } from './components/ConversationList';
 import { Chat } from './components/Chat';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
 
 export const HOST = "http://localhost:8000";
 
@@ -35,6 +33,7 @@ function App() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setConversations([...conversations, response.data]);
+      setSelectedConversation(response.data);
     } catch (error) {
       console.error('Error uploading files:', error);
     }
@@ -60,12 +59,28 @@ function App() {
 
   const handleRating = async (promptId: number, rating: number) => {
     try {
-      await axios.post(`${HOST}/conversations/${promptId}/rating`, { rating });
+      await axios.put(`${HOST}/prompts/${promptId}/rating`, { rating });
       if (selectedConversation) {
         const updatedPrompts = selectedConversation.prompts.map((prompt) =>
           prompt.id === promptId ? { ...prompt, rating } : prompt
         );
         const updatedConversation = { ...selectedConversation, prompts: updatedPrompts };
+        setSelectedConversation(updatedConversation);
+        setConversations(conversations.map((conv) => (conv.id === updatedConversation.id ? updatedConversation : conv)));
+      }
+    } catch (error) {
+      console.error('Error rating prompt:', error);
+    }
+  };
+
+  const handleUpdateFile = async (fileId: number, fileData: Partial<UploadedFile>) => {
+    try {
+      await axios.put(`${HOST}/files/${fileId}`, fileData);
+      if (selectedConversation) {
+        const updatedFiles = selectedConversation.files.map((file) =>
+          file.id === fileId ? { ...file, ...fileData } : file
+        );
+        const updatedConversation = { ...selectedConversation, files: updatedFiles };
         setSelectedConversation(updatedConversation);
         setConversations(conversations.map((conv) => (conv.id === updatedConversation.id ? updatedConversation : conv)));
       }
@@ -111,6 +126,7 @@ function App() {
                 conversation={selectedConversation}
                 onSendMessage={handleChat}
                 onRatePrompt={handleRating}
+                onUpdateFile={handleUpdateFile}
               />
             ) : (
               <FileUpload onUpload={handleFileUpload} />

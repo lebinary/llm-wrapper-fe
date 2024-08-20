@@ -4,10 +4,15 @@ export type JsonResponse = { json: object };
 
 type PromptResponse = TextResponse | DataResponse | JsonResponse;
 
-export type UploadedFile = {
+export type RawData<T extends Record<string, unknown> = Record<string, unknown>> = {
+  data: T[];
+};
+
+export type UploadedFile<T extends Record<string, unknown> = Record<string, unknown>> = {
   id: number;
   filename?: string;
   path: string;
+  data: RawData<T>;
   active: boolean;
   top_row?: null;
   created_at: string;

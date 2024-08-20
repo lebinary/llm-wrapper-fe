@@ -4,6 +4,7 @@ import { FileUpload } from './components/FileUpload';
 import { Conversation, UploadedFile } from './types';
 import { ConversationList } from './components/ConversationList';
 import { Chat } from './components/Chat';
+import { DataDisplay } from './components/DataDisplay';
 
 export const HOST = "http://localhost:8000";
 
@@ -100,7 +101,7 @@ function App() {
           <h1 className="text-3xl font-bold text-gray-800">LLM Wrapper</h1>
         </header>
         <div className="flex flex-grow overflow-hidden bg-white shadow-lg rounded-lg">
-          <div className="w-1/3 border-r border-gray-200 flex flex-col">
+          <div className="w-2/12 border-r border-gray-200">
             <div className="p-4 border-b border-gray-200">
               <button
                 onClick={startConversation}
@@ -120,18 +121,25 @@ function App() {
               />
             </div>
           </div>
-          <div className="w-2/3 p-6">
-            {selectedConversation ? (
-              <Chat
-                conversation={selectedConversation}
-                onSendMessage={handleChat}
-                onRatePrompt={handleRating}
-                onUpdateFile={handleUpdateFile}
-              />
-            ) : (
+          { selectedConversation ? (
+            <>
+              <div className="w-7/12 p-6 border-r border-gray-200">
+                <Chat
+                  conversation={selectedConversation}
+                  onSendMessage={handleChat}
+                  onRatePrompt={handleRating}
+                  onUpdateFile={handleUpdateFile}
+                />
+              </div>
+              <div className="w-3/12 p-6">
+                <DataDisplay conversation={selectedConversation} />
+              </div>
+            </>
+          ) : (
+            <div className="w-7/12 p-6 border-r border-gray-200">
               <FileUpload onUpload={handleFileUpload} />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
